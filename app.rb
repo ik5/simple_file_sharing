@@ -77,7 +77,13 @@ class App < Sinatra::Base
   end
 
   post '/uf' do
-    fname = params[:file][:filename]
+    fname = params[:file][:filename] rescue ''
+
+    if fname.empty?
+      status 400
+      return body "Bad request, no file was given. <a href=\"#{BASE_URL}\">Press here to return</a>"
+    end
+
     ext   = File.extname(fname)
     file  = set_uploadname(ext)
     # try to make sure that the file does not exists ...
