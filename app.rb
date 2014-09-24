@@ -58,11 +58,11 @@ class App < Sinatra::Base
     Dir[UPLOAD_DIR + '*'].each do |f|
       stat = File.new(f).stat
       file = {name: File.basename(f), size: human_size(stat.size), date:
-              stat.mtime.strftime('%d/%m/%Y %T')}
+              stat.mtime}
       files << file
     end
 
-    files
+    files.sort { |a,b| b[:date] <=> a[:date] }
   end
 
   def set_uploadname(ext)
