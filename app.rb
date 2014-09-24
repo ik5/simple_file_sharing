@@ -41,24 +41,27 @@ class App < Sinatra::Base
     app
   end
 
-  def human_size(size, si = false)
-    return '0' if size == 0
-    base = si ? 1000 : 1024
-    bytes = %w(B KB MB GB TB PB EB ZB YB)
+  helpers do
 
-    cnt  = Math.log(size, base).floor
-    size = size / (base * 1.0) ** cnt
+    def human_size(size, si = false)
+      return '0' if size == 0
+      base = si ? 1000 : 1024
+      bytes = %w(B KB MB GB TB PB EB ZB YB)
 
-    fmt  = size < 10 ? '%.1f %s' : '%i %s'
-    sprintf(fmt, size, bytes[cnt])
+      cnt  = Math.log(size, base).floor
+      size = size / (base * 1.0) ** cnt
+
+      fmt  = size < 10 ? '%.1f %s' : '%i %s'
+      sprintf(fmt, size, bytes[cnt])
+    end
+
   end
 
   def get_files
     files = []
     Dir[UPLOAD_DIR + '*'].each do |f|
       stat = File.new(f).stat
-      file = {name: File.basename(f), size: human_size(stat.size), date:
-              stat.mtime}
+      file = {name: File.basename(f), size: stat.size, date: stat.mtime}
       files << file
     end
 
